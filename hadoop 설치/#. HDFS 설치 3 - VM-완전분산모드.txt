@@ -1,0 +1,227 @@
+#. HDFS 설치 3 - VM-완전분산모드
+=======================================
+- Oracle Virtual Box 6.1 / 포인트 장치 -> usb
+=======================================
+--> VM
+				  Memory	hostname
+				--------------------------------------------------------
+	- CentOS_HadoopNN01	:  3072		hadoop01	192.168.56.101
+	- CentOS_HadoopDN02	:  3072/2048	hadoop02	192.168.56.102
+	- CentOS_HadoopDN03	:  3072/2048	hadoop03	192.168.56.103
+
+	=> hostnamectl set-hostname hadoop01
+	=> hostnamectl set-hostname hadoop02
+	=> hostnamectl set-hostname hadoop03
+
+- vi/etc/hosts
+	
+	127.0.0.1 localhost
+	192.168.56.101 hadoop1 
+	192.168.56.102 hadoop2
+	192.168.56.103 hadoop3
+
+
+
+ [계정]
+ - useradd hadoop
+ - passwd hadoop	/ hadoop
+ 
+
+- Java 버전 => jdk 1.8 + 
+	- Hadoop v3 : jdk 1.8 +
+
+	dnf install java-1.8.0-openjdk
+	dnf info java-1.8.0-openjdk
+	dnf remove java-1.8.0-openjdk
+
+	dnf install java-1.8.0-openjdk-devel.x86_64 -y
+	 
+	java -version
+
+	==> /etc/profile  환경변수
+
+- reate and setup ssh certificates <== 필수
+	- ssh-keygen -t rsa
+		 ?   - ssh-keygen -t rsa -P ''
+	- cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+	- chmod 640 ~/.ssh/authorized_keys
+
+- Hadoop 버전 => Hadoop v3.2.2
+	- Hadoop v3.2.2
+
+	- hadoop으로 로그인 해서 해야함
+
+	- wget https://downloads.apache.org/hadoop/common/hadoop-3.2.2/hadoop-3.2.2.tar.gz
+- 압축해제 ->
+	- tar -xvzf hadoop-3.2.2.tar.gz
+
+	[hadoop]
+	==> /.bashrc 환경변수
+
+	cp .bashrc .bashrc~		<== 복사본 .bashrc~	
+	
+	cat >> .bashrc		<== hadoop 계정 환경변수 추가
+
+	export HADOOP_HOME=/home/hadoop/hadoop-3.2.2
+	export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin 
+
+- 폴더 생성
+		~~/data
+			/datanode
+			/namenode
+
+- 폴더 구성/확인
+	/home/hadoop/hadoop-3.2.2/etc/hadoop
+
+	cat hadoop-env.sh | grep "JAVA_HOME"
+
+
+	scp -rp ~/.ssh/authorized_keys hadoop@hadoop02:~/.ssh/authorized_keys
+	scp -rp ~/.ssh/authorized_keys hadoop@hadoop03:~/.ssh/authorized_keys
+	scp -rp ~/.ssh/authorized_keys hadoop@hadoop04:~/.ssh/authorized_keys
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~/hadoop-env.sh
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	export JAVA_HOME=/usr/lib/jvm/jre-1.8.0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~	/core-site.xml
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<configuration>
+        <property>
+                <name>fs.defaultFS</name>
+                <value>hdfs://localhost:9000</value>
+        </property>
+</configuration>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~	/yarn-site.xml
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
+<configuration>
+        <property>
+                <name>yarn.nodemanager.aux-services</name>
+                <value>mapreduce_shuffle</value>
+        </property>
+        <property>
+                <name>yarn.nodemanager.vmem-check-enabled</name>
+                <value>false</value>
+        </property>
+</configuration>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~	/mapred-site.xml
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<configuration>
+        <property>
+                <name>mapreduce.framework.name</name>
+                <value>yarn</value>
+        </property>
+        <property>
+                <name>yarn.app.mapreduce.am.env</name>
+                <value>HADOOP_MAPRED_HOME=$HADOOP_HOME</value>
+        </property>
+        <property>
+                <name>mapreduce.map.env</name>
+                <value>HADOOP_MAPRED_HOME=$HADOOP_HOME</value>
+        </property>
+        <property>
+                <name>mapreduce.reduce.env</name>
+                <value>HADOOP_MAPRED_HOME=$HADOOP_HOME</value>
+        </property>
+</configuration>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~	/hdfs-site.xml
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<configuration>
+        <property>
+                <name>dfs.replication</name>
+                <value>1</value>
+        </property>
+        <property>
+                <name>dfs.name.dir</name>
+                <value>file:///home/hadoop/hadoop-3.2.2/hdfs/namenode</value>
+        </property>
+        <property>
+                <name>dfs.data.dir</name>
+                <value>file:///home/hadoop/hadoop-3.2.2/hdfs/datanode</value>
+        </property>
+</configuration>
+
+
+-
+> 정상 
+
+	hdfs namenode -format
+
+	start-dfs.sh
+	jps
+	start-yarn.sh
+	jps
+
+	stop-all.sh
+
+-------------------------------------------
+ [ jps ] 
+	ResourceManager
+	DataNode
+	NameNode
+	NodeManager
+	SecondaryNameNode
+
+#. Configure Firewall
+
+	firewall-cmd --permanent --add-port=9870/tcp
+	firewall-cmd --permanent --add-port=8088/tcp
+	firewall-cmd --permanent --add-port=8080/tcp
+	firewall-cmd --reload
+
+#. 최종 확인
+
+	http://localhost:9870 
+	  또는
+	http://your-server-ip:9870 
+
+-- [ 실습 01 : File 생성, 주입	] ----------------------------
+ 
+ 디렉토리 생성 /test00
+
+	- touchz 	파일생성
+	- put README.txt
+
+-- [ 실습 02 : java wordcount 1 ] ----------------------------
+
+#. hadoop jar hadoop-mapreduce-examples-3.2.2.jar wordcount /대상폴더 /출력폴더
+
+
+hdfs	/input01
+		/wFile01.txt	: [Hello World Bye World]
+		/wFile02.txt	: [Hello Hadoop Goodbye Hadoop]
+
+hadoop fs -put ./wFile01.txt /input01
+hadoop fs -put ./wFile02.txt /input01
+
+hadoop fs -ls -R /
+
+hadoop fs -cat /input01/wFile01.txt
+hadoop fs -cat /input01/wFile02.txt
+
+ ==> hadoop jar /home/hadoop/hadoop-3.2.2/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.2.jar wordcount /input01 /output01
+
+hadoop fs -ls /
+hadoop fs -ls /output01
+hadoop fs -cat /output01/part-r-00000 
+
+-- [ 실습 02 : java wordcount 2 ] ----------------------------
+
+hdfs	/input02
+		LICENSE.txt
+		NOTICE.txt		
+		README.txt
+
+
+ ==> hadoop jar wordcount /input01 /output02
+
+
+
+
