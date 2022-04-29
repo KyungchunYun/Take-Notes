@@ -1,0 +1,144 @@
+#. HDFS 설치 2 - VirtualBox & Centos
+
+	* Network 설정
+	* 인증, 권한
+	* hostname 설정
+	* 환경변수 설정
+
+- Centos 8.0 VM
+
+ VM : CentOS_Hadoop00
+
+- Java 버전 => jdk 1.8 + 
+	- Hadoop v3 : jdk 1.8 +
+
+	dnf install java-1.8.0-openjdk
+
+	
+
+- Hadoop 버전 => Hadoop v3.2.2
+	- Hadoop v3.2.2
+
+
+	wget http://apache.mirror.cdnetworks.com/hadoop/common/hadoop-3.2.2/hadoop-3.2.2.tar.gz
+
+
+- 압축해제 ->
+	tar -xvzf hadoop-3.2.2.tar.gz
+
+
+- 폴더 구성/확인
+	C:\HadoopPrj\hadoop-3.2.2
+
+			\etc\hadoop\ ~.xml
+
+			  - core-site.xml ==> 이름,port : 9870				
+			  - hdfs-site.xml ==> namenode, datanode
+			  - yarn-site.xml 
+			  - mapred-site.xml
+
+			  - hadoop-env.cmd
+
+			 \sbin
+			  - start-dfs.cmd
+			  - stop-dfs.cmd
+
+- 폴더 생성
+		~~/data
+			/datanode
+			/namenode
+			/namesecondary
+			/tmp
+		
+
+- 환경변수
+	- JAVA_HOME : 	echo %JAVA_HOME%
+		--> C:\Program" "Files\Java\jdk1.8.0_201
+		--> C:\Progra~1\Java\jdk1.8.0_201
+	- HADOOP_HOME :	echo %HADOOP_HOME%
+		--> C:\HadoopPrj\hadoop-3.2.2
+
+	- path 에서 추가
+		--> %JAVA_HOME%\bin
+	 	--> %HADOOP_HOME%\bin
+	 	--> %HADOOP_HOME%\sbin
+
+
+	=> 확인
+		> hadoop version
+		> hadoop -version
+
+> hdfs namenode -format
+
+		==> https://github.com/cdarlint/winutils/tree/master/hadoop-3.2.2/bin
+
+			--> winutils.exe 다운로드 --> bin
+			--> hadoop.dll  다운로드 --> bin
+
+		또는 --> Hadoop v0.0.zip --> Hadoop v0.0.bak 
+
+> 정상 
+
+	hdfs namenode -format
+
+	start-all.cmd
+	jps
+	stop-all.cmd
+
+
+------------------------------------------------------------
+
+		Jps
+		NodeManager
+		SecondaryNameNode
+ 		DataNode
+		ResourceManager
+ 		NameNode
+	
+--------------------------------------------------------------			
+-- [ 실습 01 : File 생성, 주입 ] -----------------------------
+hadoop.gs
+
+-- [ 실습 02 : java wordcount 1 ] ------------------------------
+#. hadoop jar hadoop-mapreduce-examples-3.2.2.jar wordcount /대상폴더 /출력폴더
+
+
+hdfs	/input01
+		/wFile01.txt	: [Hello World Bye World]
+		/wFile02.txt	: [Hello Hadoop Goodbye Hadoop]
+
+hadoop fs -put ./wFile01.txt /input01
+hadoop fs -put ./wFile02.txt /input01
+
+hadoop fs -ls -R /
+
+hadoop fs -cat /input01/wFile01.txt
+hadoop fs -cat /input01/wFile02.txt
+
+ ==> hadoop jar C:\~~~~\hadoop-mapreduce-examples-3.2.2.jar wordcount /input01/output01
+hadoop jar C:\HadoopPrj\hadoop-3.2.2\share\hadoop\mapreduce\hadoop-mapreduce-examples-3.2.2.jar wordcount /input01 /output01
+
+hadoop fs -ls /
+hadoop fs -ls /output01
+hadoop fs -cat /output01/part-r-00000
+
+-- [ 실습 02 : java wordcount 2 ] ------------------------------
+
+
+
+hdfs	/input02
+		LICENSE.txt
+		NOTICE.txt
+		README.txt	
+
+hadoop jar C:\HadoopPrj\hadoop-3.2.2\share\hadoop\mapreduce\hadoop-mapreduce-examples-3.2.2.jar wordcount /input02 /output02
+
+
+
+
+
+
+
+
+
+
