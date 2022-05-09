@@ -1,0 +1,75 @@
+#.  Flume 설치
+------------------------------------------------------
+
+
+wget https://downloads.apache.org/flume/1.9.0/apache-flume-1.9.0-bin.tar.gz
+
+tar -xvzf apache-flume-1.9.0-bin.tar.gz
+
+cp -r apache-flume-1.9.0-bin /home/hadoop/flume-1.9.0
+
+vi .bashrc
+	-----------------------------------------------------------------------------------------------
+	export FLUME_HOME=/home/hadoop/flume-1.9.0
+	export PATH=$PATH:~~~~> :$FLUME_HOME/bin
+	-----------------------------------------------------------------------------------------------
+source .bashrc
+echo $FLUME_HOME
+
+
+flume-ng version
+flume-ng help
+
+cp flume-env.sh.template flume-env.sh
+vi  flume-env.sh
+	-----------------------------------------------------------------------------------------------
+	export JAVA_HOME=$JAVA_HOME
+	-----------------------------------------------------------------------------------------------
+
+chmod o+r secure
+
+#. flume-ng 에이전트 -n $agent_name -c conf -f conf/flume-conf.properties.template
+	==> flume-ng agent -n 이름 -c 위치 -f 파일명
+
+flume-ng agent -n a00 -c conf -f conf/flume-conf-00.properties
+
+cp flume-conf.properties.template flume-conf-00.properties
+
+cat > flume-conf-00.properties
+------------------------------------------------------------------------------------------
+a00.sources = s00
+a00.channels = c00
+a00.sinks = k00 k01 k02
+
+a00.sources.s00.type = exec
+a00.sources.s00.command = tail -F /var/log/secure
+a00.sources.s00.channels = c00
+a00.sources.s00.interceptors=i00
+a00.sources.s00.interceptors.i00.type=timestamp
+
+a00.sinks.k00.type=hdfs
+a00.sinks.k00.channel=c00
+a00.sinks.k00.hdfs.path=hdfs://192.168.56.100:9000/user/flume/events/%y-%m-%d/%H%M/
+a00.sinks.k00.writeFormat=Text
+
+a00.channels.c00.type = memory
+a00.channels.c00.capacity = 1000
+a00.channels.c00.transactionCapacity = 100
+--------------------------------------------------------------------------
+> Error 시, 1번째
+     cp    $HADOOP_HOME/share/hadoop/common/lib/guava-27.0-jre.jar 	   $FLUME_HOME/lib
+
+> Error 시, 2번째
+     cp    $HADOOP_HOME/share/hadoop/common/lib/woodstox-core-5.0.3.jar     $FLUME_HOME/lib
+
+[[ flume-ng 실행 ]] 
+flume-ng agent --conf $FLUME_HOME/conf/ --conf-file $FLUME_HOME/conf/flume-conf-00.properties --name a00 -Dflume.root.logger=INFO,console
+
+[[ ssh 접근 시도 ]]
+
+1번째 > while [ 1 -le 2 ] ; do ssh hadoop00 hostname; done
+
+2번째 > x=0; while [ $x –le 100 ]; do ssh hadoop00 hostname; x=$((x+1)) ; done
+
+
+

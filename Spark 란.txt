@@ -1,0 +1,363 @@
+#. Spark 란
+
+- Hadoop : HDFS + MapReduce
+
+  - 병렬처리(parallezation)
+  - 데이터 분산(Distribution) 
+  - 장애 내성(Fault Tolerance) -> 복제
+
+  -  Job --> MapReduce
+	[Job 1] -------------> [Job2]
+	  -> HDFS 저장
+- Spark :
+    [ 참조] : https://wikidocs.net/26139
+  - 병렬처리
+  - 데이터 분산
+  - 인 메모리 데이터 처리
+  - 장애 내성(Fault Tolerance) -> RDD
+  - JVM Object 중 Distribute Collection(Map,Set,, )
+
+  - 함수지향적 언어 (scalar, python,,,  java)
+  - Funtional Operator (map, filter, ,,,,, )
+
+   -  Job  --> spark (In-Memroy 실행 모델) : Hadoop100 배의 성능 처리
+
+	[Job 1] -------------> [Job2]
+	  -> In-Memory 유지 
+
+   - 스파크쉘(spark-shell) <-- REPL (Read-Eval-Print Loop)
+ 
+	- scalar,python,r,java,sql
+
+   - 스파크 라이브러리 
+
+	- Spark Sql , Spark Stream, MLib, GraphX
+
+   - 클러스터 매니저(Cluster Manager)
+
+	- Standalone , Mesos, Yarn
+
+- Data 처리 그릇 : RDD , DataFrame, DataSet(
+ [ 참조 ] https://artist-developer.tistory.com/17
+  - RDD(Resilient Distributed Data)
+	- Resilient (Data 복구)
+	- Lineage  (Data 혈통/족보) --> Data 의 처리/연산 순서 
+	- 일정한 방향성을 Job 실행  
+	- RDD Lineage는 DAG(Directed Acyclic Graph)
+	- RDD 동작 원리의 핵심은 Lazy Evaluation
+
+       RDD 처리 연산
+	- transform[변환] : RDD[n] 생성 => filter, map
+	- action(행동): 계산결과 반환, RDD 요소의 특정 작업 => count, foreach 
+	
+  - DataFrame
+	- (Pandas,R, Excel Sheet)
+	- 행/열 Data 
+	- column을 가질수 있다. 
+
+  - DataSet
+	- Data 의 Schema(구조)를 포함
+	- 행/열 Data 
+	- column을 가질수 있다. 
+
+--------------------------------------------------------------------------------------------------------------------
+- 함수형 언어 
+  - [ Scala ] -
+
+	- HelloWorldObject 테스트 
+	--------------------------------------------------------------------------
+	[참조] https://www.scala-lang.org/download/2.12.10.html
+	wget https://downloads.lightbend.com/scala/2.12.10/scala-2.12.10.tgz
+	tar -xvzf scala-2.12.10.tgz
+	cp -r scala-2.12.10 ../scala-2.12.10
+
+	vi .bashrc
+	export SCALA_HOME=/home/hadoop/scala-2.12.10
+	export PATH=$PATH:~~~~~~:$SCALA_HOME/bin
+
+
+	cat > HelloWorldObject.scala
+	// main 함수를 생성App 을 상속하여 실행하는 방법 
+	object HelloWorldObject {
+  	def main(args: Array[String]): Unit = {
+    	println("Hello World main")
+  	}
+	}
+	scalac HelloWorldObject.scala
+	scala HelloWorldObject
+	--------------------------------------------------------------------------	
+	- 객체
+	- 자료형
+	- 문자열
+	- 변수	-> var, val
+
+
+	- 함수	-> def 함수( ) = { }
+	
+		def add(x: Int, y: Int): Int = { return x + y }
+		add(2,3)
+
+	- 람다함수
+		(x: Int, y: Int): Int => x + y
+		
+		def exec(f(x: Int, y: Int): Int => x + y, 2, 3
+
+		def exec(f: (Int, Int) => Int, x: Int, y: Int) = f(x, y)
+		exec((x: Int, y: Int) => x + y, 2, 3)
+
+ 	- 커링 -
+ 	(Quiz) 6의 배수 확인법
+
+	 1) 6의 배수인지 -> 6으로 나누기 
+
+ 	def modN(n:Int, x:Int) = ((x%n) ==0) 
+ 	def modN(n:Int)(x:Int) = ((x%n) ==0) 
+ 
+ 	def modSix:Int => Boolean = modN(6)
+ 	modSix(15)
+ 	modSix(12)
+
+ 	2) 6의 배수인지 ->2로, 3으로 나누기
+ 	def modN(n1:Int, n2:Int, x:Int) = ( ((x%n1)==0) &&((x%n2) ==0) ) 
+   	-------------------------------
+ 	def modN(n1:Int, n2:Int) (x:Int) = ( ((x%n1)==0) &&((x%n2) ==0) ) 
+ 	def modSix:Int => Boolean = modN(3,2)
+   	-------------------------------
+ 	def modN(n1:Int) (n2:Int) (x:Int) = ( ((x%n1)==0) &&((x%n2) ==0) ) 
+ 	def modSix:Int => Boolean = modN(3)(2)
+  	--------------------------------
+ 	modSix(4)
+ 	modSix(24)
+ 	modSix(25)
+
+ 	- 420 = 3 4 5 7
+ 	(Quiz) 420의 x,y 배수 확인법
+ 	def modN(n:Int, x:Int, y:Int) = ( ((n%x)==0) &&((n%y) ==0) ) 
+ 
+	- 클래스 -
+
+	
+	   - 멤버변수, 메소드, 메소드 오버라이드, 생성자
+	   - 상속, 추상(abstract) 클래스
+	   - 봉인(sealed) 클래스
+	
+	- 콜렉션
+
+	   - 배열(array), 
+	   - 리스트(list), 셋(set), 튜플(tuple), 
+	   - 맵(map) : key,value 형태
+
+	- 반복문 : for , 조건식, do..while, while
+
+	- 정렬, 그룹핑, 필터링 함수
+
+	   - map
+	   - reduce, fold
+	   - groupBy
+	   - filter
+	   - zip
+	   - mapValues
+	   - sort
+
+버전 확인 
+ >  scala.util.Properties.versionString
+	- String = version 2.12.10
+
+--[scala : 실습예제 01 : LICENSE파일에 BSD 몇 개있어요? ] --
+/**  spark-shell  **/
+sc
+	-> org.apache.spark.SparkContext = org.apache.spark.SparkContext@64027866
+
+val licLines = sc.textFile("/home/hadoop/spark-3.1.2/LICENSE")
+val lineCnt = licLines.count
+
+val bsdLines = licLines.filter(line => line.contains("BSD"))
+bsdLines.count
+
+def isBSD(line: String) = { line.contains("BSD") }
+val isBSD = (line: String) => line.contains("BSD")
+val bsdLines1 = licLines.filter(isBSD)
+bsdLines1.count
+bsdLines.foreach(bLine => println(bLine))
+
+--[scala : 실습예제 02 : map 변환 연산자 ] --
+//# def map[B](f: (A) ⇒ B): Traversable[B]
+//# def map[U](f: (T) => U): RDD[U]
+
+val numbers = sc.parallelize(10 to 50 by 10)
+numbers.foreach(x => println(x))
+val numbersSquared = numbers.map(num => num * num)
+numbersSquared.foreach(x => println(x))
+
+val reversed = numbersSquared.map(x => x.toString.reverse)
+reversed.foreach(x => println(x))
+
+# _ -> 밑줄문자 : placeholder (자기객체의 요소)
+val alsoReversed = numbersSquared.map(_.toString.reverse)
+alsoReversed.foreach(x => println(x))
+alsoReversed.first
+alsoReversed.top(4)
+
+--[scala : 실습예제 03 : client-ids.log 파일의 변환 ] --
+
+$ echo "15,16,20,20,77,80,94,94,98,16,31,31,15,20" > client-ids.log
+
+val lines = sc.textFile("/home/hadoop/data/client-ids.log")
+
+val idsStr = lines.map(line => line.split(","))
+idsStr.foreach(println(_))
+
+idsStr.first
+
+idsStr.collect
+
+//# def flatMap[U](f: (T) => TraversableOnce[U]): RDD[U]
+//  flatMap <-- 단일 배열(array) 화 함수
+
+val ids = lines.flatMap(_.split(","))
+
+ids.collect
+
+ids.first
+
+ids.collect.mkString("; ")
+
+val intIds = ids.map(_.toInt)
+intIds.collect
+
+--> 일정기간 접속한 id는 몇명 ? 
+
+//# def distinct(): RDD[T]
+
+val uniqueIds = intIds.distinct
+uniqueIds.collect
+val finalCount  = uniqueIds.count
+
+val transactionCount = ids.count
+
+//# def sample(withReplacement: Boolean, fraction: Double, seed: Long = Utils.random.nextLong): RDD[T]
+
+val s = uniqueIds.sample(false, 0.3)
+s.count
+s.collect
+
+val swr = uniqueIds.sample(true, 0.5)
+swr.count
+swr.collect
+
+//# def takeSample(withReplacement: Boolean, num: Int, seed: Long = Utils.random.nextLong): Array[T]
+
+val taken = uniqueIds.takeSample(false, 5)
+uniqueIds.take(3)
+
+//Implicit conversion: 클래스, 묵시적 형변환 함수 선언
+
+class ClassOne[T](val input: T) { }
+class ClassOneStr(val one: ClassOne[String]) {
+    def duplicatedString() = one.input + one.input
+}
+class ClassOneInt(val one: ClassOne[Int]) {
+    def duplicatedInt() = one.input.toString + one.input.toString
+}
+implicit def toStrMethods(one: ClassOne[String]) = new ClassOneStr(one)
+implicit def toIntMethods(one: ClassOne[Int]) = new ClassOneInt(one)
+
+val oneStrTest = new ClassOne("test")
+val oneIntTest = new ClassOne(123)
+oneStrTest.duplicatedString()
+oneIntTest.duplicatedInt()
+
+#### double RDD 함수를 통한 기초통계량
+intIds.mean
+intIds.sum
+
+intIds.variance
+intIds.stdev
+
+#### 히스토그램 histogram --> hist
+
+intIds.histogram(Array(1.0, 50.0, 100.0))
+intIds.histogram(3)
+
+#### PairRDD: [ key, value ] <- map(java,scala), dictionary(python)
+
+[파일] data_products.txt
+[파일] data_transactions.txt
+--> 2015-03-30#12:46 AM#51#50#6#7501.89
+--> 구매날짜#구매시간#고객ID#상품ID#수량#구매금액 
+
+==> 1) 최대횟수로 구매고객에게 곰인형 사은품 증정하기 
+
+--> 고객ID별 총 구매금액 
+val tranFile = sc.textFile("/home/hadoop/data/data_transactions.txt")
+val tranData = tranFile.map(_.split("#"))
+tranData.collect
+var transByCust = tranData.map(tran => (tran(2).toInt, tran))
+
+transByCust.countByKey()
+transByCust.countByKey().values.sum
+
+# 구매횟수가 가장 많았던 고객의 ID 와 구매숫자
+val (cid, purch) = transByCust.countByKey().toSeq.sortBy(_._2).last
+# 구매횟수가 가장 많았던 고객에게 곰인형 사은품을 보낸 내용 기록
+var complTrans = Array(Array("2015-03-30", "11:59 PM", "53", "4", "1", "0.00"))
+
+# 53번 고객의 모든 구매기록 출력 
+transByCust.lookup(53)
+
+transByCust.lookup(53).foreach(tran => println(tran.mkString(", ")))
+
+
+==> 2) Barbie Shopping Mall Playset 를 2개 이상 구매한 고객에게 5% 할인 
+--> 판매품	25#Barbie Shopping Mall Playset#437.5#9
+--> 구매목록 	2015-03-30#12:46 AM#51#50#6#7501.89
+
+transByCust = transByCust.mapValues(tran => {
+     if(tran(3).toInt == 25 && tran(4).toDouble > 1)
+         tran(5) = (tran(5).toDouble * 0.95).toString
+     tran })
+
+
+==> 3) 81번 Dictionary 상품을 5권 이상 구매한 고객에게 70번 상품 칫솔을 보내기
+--> 판매품	81#Dictionary#29.65#4
+		70#Toothbrush#5.1#1
+
+transByCust = transByCust.flatMapValues(tran => {
+    if(tran(3).toInt == 81 && tran(4).toInt >= 5) {
+       val cloned = tran.clone()
+       cloned(5) = "0.00"; cloned(3) = "70"; cloned(4) = "1";
+       List(tran, cloned)
+    }
+    else
+       List(tran)
+    })
+
+#. reduceByKey, foldByKey 
+==> 3) 최대 구매금액을 가진 고객을 찾아라 
+
+--> 구매목록 	2015-03-30#12:46 AM#51#50#6#7501.89
+
+val amounts = transByCust.mapValues(t => t(5).toDouble)
+val totals = amounts.foldByKey(0)((p1, p2) => p1 + p2).collect()
+totals.toSeq.sortBy(_._2).last
+amounts.foldByKey(100000)((p1, p2) => p1 + p2).collect()
+
+complTrans = complTrans :+ Array("2015-03-30", "11:59 PM", "76", "63", "1", "0.00")
+
+transByCust = transByCust.union(sc.parallelize(complTrans).map(t => (t(2).toInt, t)))
+transByCust.map(t => t._2.mkString("#")).saveAsTextFile("output-transByCust")
+
+
+#. aggregateByKey
+
+==> 4) 고객별 구매목록
+val prods = transByCust.aggregateByKey(List[String]())(
+   (prods, tran) => prods ::: List(tran(3)),
+   (prods1, prods2) => prods1 ::: prods2)
+prods.collect()
+
+
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+
+

@@ -1,0 +1,38 @@
+
+wget https://dlcdn.apache.org/spark/spark-3.1.2/spark-3.1.2-bin-hadoop3.2.tgz
+
+tar -xvzf spark-3.1.2-bin-hadoop3.2.tgz
+
+cp -r spark-3.1.2-bin-hadoop3.2 /home/hadoop/spark-3.1.2
+pwd
+ vi .bashrc
+	-----------------------------------------------------------------------------------------------
+	export SPARK_HOME=/home/hadoop/spark-3.1.2
+	export PATH=$PATH:$HADOOP_HOME/sbin:~~~~:$FLUME_HOME/bin:$SPARK_HOME/bin:$SPARK_HOME/sbin
+	-----------------------------------------------------------------------------------------------
+source .bashrc
+
+
+vi spark-env.sh
+	-----------------------------------------------------------------------------------------------
+	# - MESOS_NATIVE_JAVA_LIBRARY, to point to your libmesos.so if you use Mesos
+
+	export SPARK_WORKER_INSTANCES=2
+
+	# Options read in YARN client/cluster mode
+	-----------------------------------------------------------------------------------------------
+
+sh start-slave.sh spark://hadoop00:7077 -m 1g -c 1
+
+-----------------------------------------------------------------------
+[예제] Spark Shell 로 확인
+
+--> /home/hadoop/spark-3.1.2/bin <== tail README.md
+
+sh spark-shell --master spark://hadoop00:7077
+
+> val lines = sc.textFile("README.md")
+> lines.count()
+
+
+

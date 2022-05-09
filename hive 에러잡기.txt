@@ -1,0 +1,72 @@
+------------------------------------------------------------------------------
+1) 처음  에러
+hive-site.xml
+<~~~~ConnectionURL >
+	localhost
+
+3215 :  for&#8;transactional --> for transactional.
+
+/home/hadoop/hive-3.1.2/lib
+
+	/ guava-27.0-jre.jar
+
+-------------------------------------------
+
+2)  두번째
+
+--------------------------------------------------------------------------------------
+org.apache.hadoop.hive.metastore.HiveMetaException: Failed to load driver
+Underlying cause: java.lang.ClassNotFoundException : com.mysql.jdbc.Driver
+--------------------------------------------------------------------------------------
+
+mysql -u root -p
+
+select user,host from user;
+
+use mysql;
+delete from user where user='hive';
+
+grant all privileges on *.* to 'hive'@'localhost' identified by "hive" with grant option;
+grant all privileges on *.* to 'hive'@"%" identified by "hive" with grant option;
+
+flush privileges;
+select user,host from user;
+
+--> root 계정 / mariadb 서비스 재시작 
+
+# 초기화
+schematool -initSchema -dbType mysql
+
+# hive 확인
+schematool -initSchema -dbType mysql -userName hive -passWord hive
+
+
+-------------------------------------------------------------------
+
+
+3) 세번째
+
+ - 에러 : CTLG
+
+
+mysql -u root -p
+
+show databases;
+
+drop database hive ;
+
+----------------------------------
+
+# hive 확인
+schematool -initSchema -dbType mysql -userName hive -passWord hive
+
+
+
+
+
+
+
+
+
+
+
