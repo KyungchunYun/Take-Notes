@@ -1,0 +1,53 @@
+#. Dept Class 정의
+
+1) DB Connection Class : DB Connection
+	//1. JDBC 드라이버 로드
+	//2.Database Connection 연결                            ----------------> DB(SQL)와 JAVA를 연결 
+	//6. Database Connection 해제
+
+2) Data 객체 : Dept Class : VO/DTO
+	// 멤버 필드
+		private int deptno
+		private String dname;
+		private String loc;
+	// 멤버 생성자
+		Dept() { }
+		Dept(deptno, dname, loc) { }                  ----------------->  sql 컬럼 class 생성
+	// 멤버 메소드
+		getDeptno() {} ; getDname() { }; getLoc() { }
+		//setDeptno() {} ; setDname() { }; setLoc() { }
+
+
+
+
+3) CRUD 처리 객체 : Dept CRUD Class : DAO
+
+	DB Connection 호출
+
+	//3. Statement 생성
+	//4. SQL 전송 --> executeQuery(), executeUpdate()
+	//5. ResultSet(결과) 받기
+                                                                                        -------------------> 검색 수정 조회 삭제 등의 처리 할수 있는 메소드를 생성
+	selectDept( ) { } 부서명 -> 부서번호, 부서명, 부서위치 
+	insertDept( ) { }
+	updateDept( ) { }
+	deleteDept( ) { }
+	listDept() { } 	부서명 
+
+--------------------------
+4) Main 기반 Class 
+
+ main() {
+	// 부서관리 시스템 시작
+
+	while( ) {
+		1. 부서목록
+		2. 부서보기
+		3. 부서입력
+		4. 부서수정
+		5. 부서삭제 
+	}
+
+	// 부서관리 시스템 종료
+
+ }
