@@ -1,0 +1,79 @@
+#. Spring 에 관하여 ^^
+ ---------------------------------------------------------------------------------------
+
+#. 스프링(Spring) 목적 : 내용이 변해도 java code를 수정하지 말자.
+
+#. 스프링(Spring)
+  - 2002 에 등장
+  - 2004 : [ spring 1.0] : 	DIxAOP Container <-- Bean 정의 파일에서부터 시작 
+
+		Bean 정의 간략화
+
+  - 2006 : [ spring 2.0] : 	Bean 정의 파일 --> xml 형식으로 전환 , @(애노테이션) 에 대한 고려 
+
+  - 2007 : [ spring 2.5] :	@(애노테이션) 강화 
+  - 2009 : [ spring 3.0] : 	@(애노테이션) 강화 , 도입 
+ 
+  - 2011 : 	    : 클라우드 시대 
+ ---------------------------------------------------------------------------------------
+#. Spring 개발환경 => [참조 ] https://hothoony.tistory.com/771
+
+->  STS 3.9.14 (eclipse 4.8.0) / Eclipse 2020-03 / JDK 8+ / Tomcat 9.0 / Maven (3.5.1)
+->  Spring Framework (5.2.x release)
+
+	- File Type : UTF-8
+	- RunTime Server : Tomcat9.0 추가
+ ---------------------------------------------------------------------------------------
+
+ -- Struts     Spring     Hibernate     JPA      Ibatis     Mybatis  --
+
+ Java 기반 Framework
+
+ [ Presentation ] 	Struts(MVC), Spring(MVC)
+
+ [ Business ] 	Spring(DI*IoC,AoP)
+
+ [ Persistence ] 	([ORM] Object Relation Mapping : DB연동) 
+		Hibernate     JPA      Ibatis     Mybatis
+
+---------------------------------------------------------------------------------------
+#. Framework 
+	- 사전적의미 : 구조 또는 뼈대
+	- S/W 의미  : 기능을 미리 클래스나 인터페이스 등으로 만들어 제공하는 반제품
+	- 시간/일정이 보장될 수 있다. --> 개발 생산성 높임
+	- 유지보수, 확장성도 보장
+
+#. 스프링 프레임워크(Spring Framework)
+
+	- Java Web Application 개발을 위한 오픈 소스 프레임워크
+	- EJB(Enterprise Java Bean)보다 가벼운 경량 프레임워크
+
+#. 컨테이너(Container) 
+
+  - Apache Tomcat 
+		<-- Servlet 컨테이너(Container)
+		--> Servlet 생성, 초기화, 서비스 실행, 소멸 등의 모든 권한 관리
+
+  - Spring Framework 
+		<-- Bean 컨테이너(Container) : DIxAOP 컨테이너 	
+		--> Bean 모든 권한 관리
+
+		- EJB(Enterprise Java Bean)보다 가벼운 경량 컨테이너로 수행
+		- DI(Dependency Injection) 기능 지원 : 의존성 주입
+		- IoC(Inversion of Control) Container : 제어역행
+		- AOP(Aspect-Oriented Programming) 기능 지원 : 관점지향 프로그래밍
+		- 타 Library와의 연동 기능 지원
+
+		- Java/JavaEE 표준
+
+#. 경량 컨테이너 <-- 설계
+
+	- POJO : Plan Old Java Object 
+	- 컨테이너와 프레임워크 등에 의존하지 않고, 주기/관계를 해결하는 아키텍처로 구현 
+	- 선언적 트랜잭션 관리
+
+	예) DIxAOP 컨테이너 	
+
+- IoC(Inversion of Control) Container : 제어역행
+- AOP(Aspect-Oriented Programming) 기능 지원 : 관점지향 프로그래밍
+

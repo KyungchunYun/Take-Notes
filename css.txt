@@ -1,0 +1,21 @@
+1.  기본구조(Syntax)
+
+<위치> {
+  	Property : value
+	Property : value
+ }
+
+
+2.  어디에(Selector)
+
+	* 	: 전체 태그 
+	p	: p 태그만
+	#아이디	: 해당 id 가 있는 태그만
+	.클래스	: 해당 클래스가 있는 태그만
+
+	, 	: 복수개로 나란히 적용
+
+	body h1 p : 
+
+3.  어떻게(Property:value)
+	- 색깍, 크기, 타입,,,,,

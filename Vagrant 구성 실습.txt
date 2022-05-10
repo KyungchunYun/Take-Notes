@@ -1,0 +1,221 @@
+#. Vagrant 구성 실습
+
+	vagrant : 2010	--> VM, OS Cotainer
+	docker  : 2013 	--> Docker(Process/Service) Container 
+########################################################################
+1) vagrant -> VM CentOS/7
+
+	vagrant init 	=> Vagrantfile
+
+	==================================
+
+	# -*- mode: ruby -*-
+	# vi: set ft=ruby :
+
+	Vagrant.configure("2") do |config|
+   		config.vm.box = "centos/7"
+		config.vm.hostname = "vm7"
+		config.vm.provider "virtualbox" do |vb|
+			vb.name = "VM_CentOS7"
+			vb.memory = "2048"
+		end
+	end
+	===================================
+
+	vagrant up	=> box download -> C:\Users\Playdata\.vagrant.d\boxes
+
+	vagrant ssh	=> [vagrant@vm7 ~]$
+
+			> pwd, ls, hostname
+			> ping -c 3 8.8.8.8
+			> su - 	<----- vagrant
+			> wget
+			> yum info wget
+			> yum install wget -y
+			> wget
+			> exit
+			> wget
+
+			> systemctl status sshd
+			> systemctl status firewalld.service
+
+			> toucth test.txt
+			> ll
+			> cat >> test.txt
+			  Hello vagrant ^^
+			  ctrl + c
+			> cat test.txt
+
+			> vi test.txt
+			   Hello vagrant ^^
+			   Have a nice day !!
+			> exit
+	vagrant halt
+	vagrant status	
+	vagrant box list
+	vagrant destory
+	vagrant vox list
+
+########################################################################
+2) vagrant -> VM CentOS/8 with network, install_pkg.sh 
+
+vagrant init 	=> Vagrantfile
+
+	==================================
+
+	# -*- mode: ruby -*-
+	# vi: set ft=ruby :
+
+	Vagrant.configure("2") do |config|
+   	config.vm.box = "centos/8"
+	config.vm.hostname = "vm8"
+	config.vm.network "privat_network", ip: "192.168.56.10"
+	config.vm.provider "virtualbox" do |vb|
+		vb.name = "VM_CentOS8"
+		vb.memory = "2048"
+		vb.cpus = 2
+	end
+	config.vm.provision "shell", path:"install_pkg.sh"
+
+	end
+	===================================
+
+	=== install_pkg.sh ===
+	#!/usr/bin/env bash
+
+	# install packages
+	dnf install wget -y 
+	dnf install java-1.8.0-openjdk-devel.x86_64 -y
+	adduser hadoop
+	passwd hadoop
+	hadoop
+	hadoop
+	wget https://downloads.apache.org/hadoop/common/hadoop-3.2.2/hadoop-3.2.2.tar.gz
+	tar -xvzf hadoop-3.2.2.tar.gz -C /home/hadoop/
+
+	===================================
+
+	vagrant status
+	vagrant ssh (확인)
+		- hostname
+		- ip
+		- wget
+		- su -
+		- su - hadoop
+		- java - version
+		- hadoop-3.2.2 폴더
+	---------------------------------------
+	VM 에서 확인
+		- cpu 개수
+		- memory
+		- ping 192.168.56.10
+
+########################################################################
+3) vagrant -> VM CentOS/8 3대
+
+=========================================================
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+N = 3 # max number of DataNode
+
+Vagrant.configure("2") do |config|
+
+	### HadoopNN00 ##################################
+
+	config.vm.define "HadoopNN00" do |cfg|
+
+   		cfg.vm.box = "centos/8"
+		cfg.vm.hostname = "hadoop00"
+		cfg.vm.network "private_network", ip: "192.168.56.100"
+		cfg.vm.provider "virtualbox" do |vb|
+			vb.name = "HadoopNN00"
+			vb.memory = "2048"
+			vb.cpus = 2
+		end
+		cfg.vm.provision "shell", path:"install_pkg.sh"
+	end
+
+	### HadoopDN0~ ###################################
+      (1..N).each do |i|
+
+	config.vm.define "HadoopDN0#{i}" do |cfg|
+
+   		cfg.vm.box = "centos/8"
+		cfg.vm.hostname = "hadoop0#{i}"
+		cfg.vm.network "private_network", ip: "192.168.56.10#{i}"
+		cfg.vm.provider "virtualbox" do |vb|
+			vb.name = "HadoopDN0#{i}"
+			vb.memory = "1536"
+			vb.cpus = 1
+		end
+		cfg.vm.provision "shell", path:"install_pkg.sh"
+	end
+        end
+	################################################
+end
+
+==========================================================
+
+	=== install_pkg.sh ===
+	#!/usr/bin/env bash
+
+	# install packages
+	dnf install wget -y 
+	
+	===================================
+	vagrant status
+	vagrant ssh VM이름
+		- hostname
+		- ip
+		- wget
+	---------------------------------------
+	VM 에서 확인
+		- cpu 개수
+		- memory
+		- ping 192.168.56.100 ~ 103
+
+##################################################
+
+ === ssh 접속 =====================
+
+ == vagrant ssh-config HadoopNN00
+
+  HostName 127.0.0.1
+  User vagrant
+  Port 2222
+  IdentityFile C:/VagrantPrj/CentOS8_3VM/.vagrant/machines/HadoopNN00/virtualbox/private_key
+
+
+
+
+
+
+ == vagrant ssh-config HadoopDN01
+
+  HostName 127.0.0.1
+  User vagrant
+  Port 2200
+  IdentityFile C:/VagrantPrj/CentOS8_3VM/.vagrant/machines/HadoopDN01/virtualbox/private_key
+
+ == vagrant ssh-config HadoopDN02
+
+  HostName 127.0.0.1
+  User vagrant
+  Port 2201
+  IdentityFile C:/VagrantPrj/CentOS8_3VM/.vagrant/machines/HadoopDN02/virtualbox/private_key
+
+ == vagrant ssh-config HadoopDN03
+
+  HostName 127.0.0.1
+  User vagrant
+  Port 2202
+  IdentityFile C:/VagrantPrj/CentOS8_3VM/.vagrant/machines/HadoopDN03/virtualbox/private_key
+
+########################################################################
+4) 최종 구성
+
+   vagrant -> VM CentOS/8 2대 with install_pkg.sh
+
+   HDFS 완전분산 모드 완결 

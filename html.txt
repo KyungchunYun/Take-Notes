@@ -1,0 +1,39 @@
+- 미디어 태그
+
+	<img src="  위치(URL) "  width=" 100 " height=" 200 "  alt=" 대체글자 " />	
+
+	<audio src=" "  width=" 100 " height=" 200 "  autoplay = " " loop=" " control= " " />
+
+	<video src=" "  width=" 100 " height=" 200 " autoplay = " " loop=" " control= " "  />
+
+
+#. 전송 태그 	
+
+	- 전송방식 : 
+		- Get => QueryString -> URL?변수명="~~~"&변수명="~~~"	
+
+				http://www.daum.net/login.jsp?id='jane'&pwd=1234
+
+		- Post => Body 영역 내에서 같이 전송 
+
+	<Form action="전송위치" method="전송방식" >
+
+
+		 <input type="submit" value="submit" /><br />
+	</Form>
+
+
+
+#. 태그 종류 (영역 태그, 인라인 태그)
+
+	- 영역 태그
+		h1  태그
+		div  태그
+		p  태그
+		목록 태그
+		Table 태그
+		Form 태그
+	- 인라인 태그
+		a 태그
+		span 태그
+		input 태그
